@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  traefik:
+    image: traefik:v2.2.1
+    container_name: traefik
+    hostname: traefik
+    restart: "unless-stopped"
+    networks:
+      proxy:
+         ipv4_address: 172.21.0.3
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - 8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      #- ./acme.json:/etc/traefik/acme.json
+      - ./config:/etc/traefik/config
+      - ./certs:/etc/traefik/certs
+    labels:
+      - "traefik.enable=true"
+      # API / Dashboard
+      - "traefik.http.routers.traefik-api_catch-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.traefik-api_catch-http.EntryPoints=http"
+      - "traefik.http.routers.traefik-api_catch-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.traefik-api.rule=Host(`${TRAEFIK_DOMAIN}`)"
+      - "traefik.http.routers.traefik-api.entrypoints=https"
+      - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-api.tls=true"
+      # Metrics
+      - "traefik.http.routers.traefik-metrics.rule=Host(`${TRAEFIK_DOMAIN}`) && Path(`/metrics`)"
+      - "traefik.http.routers.traefik-metrics.entrypoints=http"
+      - "traefik.http.routers.traefik-metrics.service=prometheus@internal"
+
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/24
