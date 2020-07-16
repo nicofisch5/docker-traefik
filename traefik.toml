@@ -9,45 +9,16 @@
     Address = ":443"
 
 [providers.docker]
-  exposedByDefault = false
-  network = "proxy"
+  exposedByDefault = false # Traefik va ignorer les containers qui n'ont pas le label "traefik.enable=true"
+  network = "proxy" # Limite le scope de Traefik au network docker "proxy"
 
 [providers.file]
   directory = "/etc/traefik/config"
   watch = true
 
 [api]
-  dashboard = true
+  dashboard = true # active le dashboard et l'api
 
 [metrics]
   [metrics.prometheus]
     manualRouting = true
-
-# Dev : acme resolver (Working only with step-ca cf : docker-compose.override.yml.dist)
-#[certificatesResolvers]
-#  [certificatesResolvers.default]
-#    [certificatesResolvers.default.acme]
-#      email = "admin@dev.fr"
-#      storage = "/etc/traefik/acme.json"
-#      caServer = "https://step-ca:8181/acme/dev/directory"
-#      [certificatesResolvers.default.acme.httpChallenge]
-#      entrypoint = "web"
-
-# Prod : Let Encrypt acme resolver
-#[certificatesResolvers]
-#  [certificatesResolvers.default]
-#    [certificatesResolvers.default.acme]
-#      email = "user@example.fr"
-#      storage = "/etc/traefik/acme.json"
-#      [certificatesResolvers.default.acme.httpChallenge]
-#      entryPoint = "http"
-
-# Stage : Let Encrypt stage acme resolver (For testing DNS / config)
-#[certificatesResolvers]
-#  [certificatesResolvers.default]
-#    [certificatesResolvers.default.acme]
-#      email = "user@example.fr"
-#      storage = "/etc/traefik/acme.json"
-#      caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-#      [certificatesResolvers.default.acme.httpChallenge]
-#      entryPoint = "http"

@@ -6,39 +6,31 @@ services:
     container_name: traefik
     hostname: traefik
     restart: "unless-stopped"
-    networks:
-      proxy:
-         ipv4_address: 172.21.0.3
-    ports:
+    ports: # partage des ports 80 et 443 sur la machine hôte
       - "80:80"
       - "443:443"
-    expose:
-      - 8080
+      #- "8080:8080"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/etc/traefik/traefik.toml
-      #- ./acme.json:/etc/traefik/acme.json
-      - ./config:/etc/traefik/config
-      - ./certs:/etc/traefik/certs
+      - /var/run/docker.sock:/var/run/docker.sock # Traefik utilise la socket docker pour observer les containers qui sont up / down
+      - ./traefik.toml:/etc/traefik/traefik.toml # dossier par défaut dans lequel traefik va chercher la configuration
+      - ./config:/etc/traefik/config # on partage un dossier de config avec le container
+      - ./certs:/etc/traefik/certs # on partage un dossier de certificats avec le container
     labels:
-      - "traefik.enable=true"
+      - "traefik.enable=true" # active la gestion de ce container par Traefik
       # API / Dashboard
-      - "traefik.http.routers.traefik-api_catch-http.rule=Host(`${TRAEFIK_DOMAIN}`)"
-      - "traefik.http.routers.traefik-api_catch-http.EntryPoints=http"
-      - "traefik.http.routers.traefik-api_catch-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.traefik-api_catch-http.rule=Host(`${TRAEFIK_DOMAIN}`)" # indique à Traefik que le Host de la requête doit être la variable d'environnement (fichier .env)
+      - "traefik.http.routers.traefik-api_catch-http.entrypoints=http" # indique à Traefik que la route n'écoute que l'entrypoint 'http' (port 80)
       - "traefik.http.routers.traefik-api.rule=Host(`${TRAEFIK_DOMAIN}`)"
       - "traefik.http.routers.traefik-api.entrypoints=https"
-      - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-api.service=api@internal" # service api interne à traefik
       - "traefik.http.routers.traefik-api.tls=true"
       # Metrics
       - "traefik.http.routers.traefik-metrics.rule=Host(`${TRAEFIK_DOMAIN}`) && Path(`/metrics`)"
       - "traefik.http.routers.traefik-metrics.entrypoints=http"
-      - "traefik.http.routers.traefik-metrics.service=prometheus@internal"
-
+      - "traefik.http.routers.traefik-metrics.service=prometheus@internal" # service prometheus interne à traefik
+    networks:
+      - proxy
+  
 networks:
   proxy:
     name: proxy
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.21.0.0/24
