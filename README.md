@@ -82,7 +82,7 @@ cd config
 CERTNAME=traefik.devl; echo "
 tls:
   certificates:
-    - certFile: /etc/traefik/certs/_wildcadrd.${CERTNAME}.pem
+    - certFile: /etc/traefik/certs/_wildcard.${CERTNAME}.pem
       keyFile: /etc/traefik/certs/_wildcard.${CERTNAME}-key.pem
 " > "tls-certs-${CERTNAME}.yml"
 ```
