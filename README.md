@@ -40,18 +40,6 @@ Make sure to add the hostnames configured in `.env` file to you `/etc/hosts` fil
 
 ## Installation
 
-### Pre-installation steps
-
-In order to copy the default environment variables and set a default traefik.toml configuration, please run the following
-script:
-
-```bash
-cp .env.example .env
-```
-
-Once done, you can edit all the environment variables in the newly generated
-`.env` file and change `traefik.toml` for uncomment certificatesResolvers if necessary.
-
 ### Traefik
 
 Simply run the docker-compose command below:
