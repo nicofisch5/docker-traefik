@@ -1,7 +1,7 @@
 # Docker traefik
 
 This repository contains a dockerized [traefik](https://traefik.io/)
-reverse-proxy, for manage all app on a server for use ports 80 / 443.
+reverse-proxy, for manage all app on a server using ports 80 / 443.
 
 This README.md file was completely insprired by one written by Alexandre Haag (a delicious man).
 
@@ -71,7 +71,7 @@ Then, navigate to https://traefik.devl/ in your favorite browser.
 ### Create manually certificate
 
 First install this tool [mkcert](https://github.com/FiloSottile/mkcert).
-And run this command :
+And run this command:
 
 ```bash
 mkcert -install
@@ -79,14 +79,14 @@ mkcert -install
 
 #### Create manually wildcard certificate
 
-Replace `*.traefik.devl` :
+Replace `*.traefik.devl`:
 ```bash
 cd certs
 mkcert "*.traefik.devl"
 cd ..
 ```
 
-Then copy command behind and replace CERTNAME var with the wildcard domain eq for `*.traefik.devl` => `traefik.devl` :
+Then copy command behind and replace CERTNAME var with the wildcard domain eq for `*.traefik.devl` => `traefik.devl`:
 
 ```bash
 cd config
@@ -94,7 +94,7 @@ cd config
 CERTNAME=traefik.devl; echo "
 tls:
   certificates:
-    - certFile: /etc/traefik/certs/_wildcadrd.${CERTNAME}.pem
+    - certFile: /etc/traefik/certs/_wildcard.${CERTNAME}.pem
       keyFile: /etc/traefik/certs/_wildcard.${CERTNAME}-key.pem
 " > "tls-certs-${CERTNAME}.yml"
 ```
